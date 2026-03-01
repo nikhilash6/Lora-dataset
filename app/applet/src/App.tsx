@@ -6,8 +6,6 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
 type ProcessedImage = {
   id: string;
   file: File;
@@ -48,6 +46,16 @@ export default function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   
+  // API Key State
+  const [apiKey, setApiKey] = useState<string>(() => {
+    try {
+      return localStorage.getItem("gemini_api_key") || "";
+    } catch (e) {
+      return "";
+    }
+  });
+  const [showSettings, setShowSettings] = useState(false);
+
   // Curation State
   const [baseModel, setBaseModel] = useState<string>(BASE_MODELS[0]);
   const [isCurating, setIsCurating] = useState(false);
@@ -101,6 +109,16 @@ export default function App() {
     setImages((prev) => prev.filter((img) => img.id !== id));
   };
 
+  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setApiKey(val);
+    try {
+      localStorage.setItem("gemini_api_key", val);
+    } catch (err) {
+      console.warn("Could not save to localStorage", err);
+    }
+  };
+
   const handleCuration = async () => {
     setIsCurating(true);
     // Simulate curation scoring using Gemini API or just mock it for speed
@@ -134,6 +152,7 @@ export default function App() {
         
         const prompt = `Describe this image in ${captionFormat === "tags" ? "comma-separated tags" : "a few descriptive sentences"}. ${nsfwEnabled ? "NSFW content is allowed." : "Keep it SFW."}`;
         
+        const ai = new GoogleGenAI({ apiKey: apiKey || "missing_key" });
         const response = await ai.models.generateContent({
           model: "gemini-2.5-flash",
           contents: [
@@ -209,6 +228,7 @@ export default function App() {
       
       const prompt = `Describe this image in ${captionFormat === "tags" ? "comma-separated tags" : "a few descriptive sentences"}. ${nsfwEnabled ? "NSFW content is allowed." : "Keep it SFW."}`;
       
+      const ai = new GoogleGenAI({ apiKey: apiKey || "missing_key" });
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [
@@ -243,11 +263,35 @@ export default function App() {
             </div>
             <h1 className="text-xl font-semibold tracking-tight">LoRA Dataset Architect</h1>
           </div>
-          <div className="flex items-center gap-2 text-sm text-zinc-400 font-mono">
-            <span>VRAM: &lt;8GB</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-zinc-400 font-mono">
+              <span>VRAM: &lt;8GB</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            </div>
+            <button 
+              onClick={() => setShowSettings(!showSettings)}
+              className="p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors text-zinc-300"
+              title="Settings"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
           </div>
         </div>
+        {showSettings && (
+          <div className="max-w-7xl mx-auto px-6 py-4 border-t border-zinc-800 bg-zinc-900/80">
+            <div className="max-w-md">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">Gemini API Key</label>
+              <input
+                type="password"
+                value={apiKey}
+                onChange={handleApiKeyChange}
+                placeholder="AIzaSy..."
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-indigo-500"
+              />
+              <p className="text-xs text-zinc-500 mt-2">Required for automated captioning. Saved locally in your browser.</p>
+            </div>
+          </div>
+        )}
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
