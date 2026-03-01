@@ -62,6 +62,7 @@ export default function App() {
   const [isCurating, setIsCurating] = useState(false);
   const [curationThreshold, setCurationThreshold] = useState<number>(60);
   const [curationPage, setCurationPage] = useState<number>(1);
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
   const [colorGrade, setColorGrade] = useState<ColorGradeStyle>("original");
   const [isColorGrading, setIsColorGrading] = useState(false);
 
@@ -516,12 +517,22 @@ export default function App() {
                         <CheckCircle className="w-5 h-5 text-indigo-400" />
                         Dataset Grading & Color
                       </h3>
-                      <button
-                        onClick={() => setStep(3)}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition-colors"
-                      >
-                        Proceed to Captioning
-                      </button>
+                      <div className="flex items-center gap-3">
+                        <select
+                          value={sortOrder}
+                          onChange={(e) => setSortOrder(e.target.value as "desc" | "asc")}
+                          className="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 text-zinc-300"
+                        >
+                          <option value="desc">Best to Worst</option>
+                          <option value="asc">Worst to Best</option>
+                        </select>
+                        <button
+                          onClick={() => setStep(3)}
+                          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition-colors"
+                        >
+                          Proceed to Captioning
+                        </button>
+                      </div>
                     </div>
                     
                     <div className="space-y-2 pb-4 border-b border-zinc-800">
@@ -570,7 +581,10 @@ export default function App() {
                   </div>
                   
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {images.slice((curationPage - 1) * 25, curationPage * 25).map((img) => {
+                    {[...images].sort((a, b) => {
+                      if (a.score === undefined || b.score === undefined) return 0;
+                      return sortOrder === "desc" ? b.score - a.score : a.score - b.score;
+                    }).slice((curationPage - 1) * 25, curationPage * 25).map((img) => {
                       const isRed = img.score! < curationThreshold;
                       const isYellow = img.score! >= curationThreshold && img.score! < curationThreshold + 15;
                       const isGreen = img.score! >= curationThreshold + 15;
