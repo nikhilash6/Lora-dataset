@@ -6,11 +6,20 @@ echo "LoRA Dataset Architect - One-Click Installer & Runner"
 echo "==================================================="
 echo ""
 
-# Check for Python
-if ! command -v python3 &> /dev/null
-then
-    echo "[ERROR] Python 3 is not installed."
-    echo "Please install Python 3.10 or 3.11."
+# Find a compatible Python version (3.10 or 3.11)
+PYTHON_CMD=""
+if command -v python3.11 &> /dev/null; then
+    PYTHON_CMD="python3.11"
+elif command -v python3.10 &> /dev/null; then
+    PYTHON_CMD="python3.10"
+elif python3 -c "import sys; exit(0 if sys.version_info >= (3,10) and sys.version_info < (3,12) else 1)" &> /dev/null; then
+    PYTHON_CMD="python3"
+else
+    echo "[ERROR] Could not find Python 3.10 or 3.11."
+    echo "PyTorch does not fully support newer Python versions yet."
+    echo ""
+    echo "You can keep your current Python version (3.14), but please also install Python 3.11."
+    echo "(e.g., via 'brew install python@3.11' or 'sudo apt install python3.11')"
     exit 1
 fi
 
@@ -22,9 +31,9 @@ then
     exit 1
 fi
 
-echo "[1/4] Setting up Python Virtual Environment..."
+echo "[1/4] Setting up Python Virtual Environment using $PYTHON_CMD..."
 if [ ! -d "venv" ]; then
-    python3 -m venv venv
+    $PYTHON_CMD -m venv venv
 fi
 source venv/bin/activate
 

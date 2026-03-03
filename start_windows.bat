@@ -4,11 +4,29 @@ echo LoRA Dataset Architect - One-Click Installer ^& Runner
 echo ===================================================
 echo.
 
-:: Check for Python
-python --version >nul 2>&1
-IF %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] Python is not installed or not in your PATH.
-    echo Please install Python 3.10 or 3.11 from python.org and check "Add Python to PATH".
+:: Find a compatible Python version (3.10 or 3.11)
+set PYTHON_CMD=
+py -3.11 -c "import sys; exit(0 if sys.maxsize > 2**32 else 1)" >nul 2>&1
+IF %ERRORLEVEL% EQU 0 (
+    set PYTHON_CMD=py -3.11
+) ELSE (
+    py -3.10 -c "import sys; exit(0 if sys.maxsize > 2**32 else 1)" >nul 2>&1
+    IF %ERRORLEVEL% EQU 0 (
+        set PYTHON_CMD=py -3.10
+    ) ELSE (
+        python -c "import sys; exit(0 if sys.version_info >= (3,10) and sys.version_info < (3,12) and sys.maxsize > 2**32 else 1)" >nul 2>&1
+        IF %ERRORLEVEL% EQU 0 (
+            set PYTHON_CMD=python
+        )
+    )
+)
+
+IF "%PYTHON_CMD%"=="" (
+    echo [ERROR] Could not find a 64-bit installation of Python 3.10 or 3.11.
+    echo PyTorch does not support Python 3.12+ or 32-bit Python yet.
+    echo.
+    echo You can keep your current Python version ^(3.14^), but you MUST ALSO install Python 3.11.
+    echo Please download the 64-bit installer for Python 3.11 from python.org.
     echo Press any key to exit...
     pause >nul
     exit /b
@@ -24,9 +42,9 @@ IF %ERRORLEVEL% NEQ 0 (
     exit /b
 )
 
-echo [1/4] Setting up Python Virtual Environment...
+echo [1/4] Setting up Python Virtual Environment using %PYTHON_CMD%...
 IF NOT EXIST "venv" (
-    python -m venv venv
+    %PYTHON_CMD% -m venv venv
     IF %ERRORLEVEL% NEQ 0 (
         echo [ERROR] Failed to create virtual environment.
         pause >nul
