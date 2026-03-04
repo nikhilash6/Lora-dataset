@@ -29,10 +29,12 @@ If you've ever trained a LoRA, you know that prepping the dataset is the most te
 
 ## 📸 Screenshots
 
-*(Add your screenshots here! Just drag and drop images into GitHub while editing this file to upload them.)*
-
-![Screenshot 1 Placeholder](https://via.placeholder.com/800x400.png?text=Step+1:+Import+and+Crop)
-![Screenshot 2 Placeholder](https://via.placeholder.com/800x400.png?text=Step+3:+Live+Captioning+with+Qwen2-VL)
+<img width="1357" height="965" alt="image" src="https://github.com/user-attachments/assets/6077b3e4-cf91-4671-8b52-33ad27e17f12" />
+<img width="1371" height="989" alt="image" src="https://github.com/user-attachments/assets/b28076e5-124a-48e7-88cb-82f8ac8ff37f" />
+<img width="1303" height="851" alt="image" src="https://github.com/user-attachments/assets/d352897f-b748-434d-ba49-21e23538dd77" />
+<img width="1358" height="1118" alt="image" src="https://github.com/user-attachments/assets/869dac61-4565-4d8f-8821-d58a198d76e6" />
+<img width="1406" height="998" alt="image" src="https://github.com/user-attachments/assets/2954ee9a-81d4-4572-96f2-ec7e2380961e" />
+<img width="1313" height="1055" alt="image" src="https://github.com/user-attachments/assets/1744c92a-3f11-41c2-930a-06e13001c1e4" />
 
 ---
 
