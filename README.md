@@ -29,8 +29,6 @@ If you've ever trained a LoRA, you know that prepping the dataset is the most te
 
 ## 📸 Screenshots
 
-*(Add your screenshots here! Just drag and drop images into GitHub while editing this file to upload them.)*
-
 <img width="1357" height="965" alt="image" src="https://github.com/user-attachments/assets/f590a7a7-f050-4378-baae-47fca557b906" />
 <img width="1371" height="989" alt="image" src="https://github.com/user-attachments/assets/ec1f094a-14d6-4404-a128-f2289b0464fa" />
 <img width="1303" height="851" alt="image" src="https://github.com/user-attachments/assets/ff40f6dc-cfdf-4a5b-91d7-12503ca198d3" />
